@@ -6,7 +6,7 @@ import javax.swing.table.AbstractTableModel;
 
 public class FormationTableModel extends AbstractTableModel{
 
-	private final String[] colonnes = {"id", "nom"};
+	private final String[] colonnes = {"nom"};
 	private List<Formation> formations;
 	
 	public FormationTableModel(List<Formation> formations) {
@@ -26,6 +26,11 @@ public class FormationTableModel extends AbstractTableModel{
 	@Override
 	public int getRowCount() {
 		return formations.size();
+                
+	}
+	
+	public void addFormation(Formation f){
+		this.formations.add(f);
 	}
 	   
 	public Formation getFormation(int rowIndex){
@@ -37,10 +42,7 @@ public class FormationTableModel extends AbstractTableModel{
         switch (columnIndex) {
 
             case 0:
-                return formations.get(rowIndex).getId();
-
-            case 1:
-            	return formations.get(rowIndex).getNom();
+               return formations.get(rowIndex).getNom();
             	
             default:
             	throw new IllegalArgumentException();

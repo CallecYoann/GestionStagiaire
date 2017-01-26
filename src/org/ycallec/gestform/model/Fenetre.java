@@ -19,6 +19,10 @@ import javax.swing.JScrollPane;
 import java.awt.CardLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -31,6 +35,9 @@ import javax.swing.JTable;
 import javax.swing.border.TitledBorder;
 import javax.swing.UIManager;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JTextField;
  
 public class Fenetre extends JFrame {
 	private JPanel pannel = new JPanel();
@@ -39,6 +46,9 @@ public class Fenetre extends JFrame {
 	private JTable table;
 	private JTable table_1;
 	private JTable table_2;
+	private JTextField textField;
+	private JTextField saisieNomFormation;
+	FormationTableModel ftm;
 	
 	public Fenetre(){      
 	    this.setTitle("Ma première fenêtre Java");
@@ -49,17 +59,15 @@ public class Fenetre extends JFrame {
 	    getContentPane().setLayout(null);
 	    
 	    JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-	    tabbedPane.setBounds(0, 0, 610, 500);
+	    tabbedPane.setBounds(0, 12, 610, 471);
 	    getContentPane().add(tabbedPane);
 	    
 	    JPanel panel = new JPanel();
 	    tabbedPane.addTab("Formation", null, panel, null);
 	    panel.setLayout(null);
 	    
-	    
-	    
 	    JButton btnCreerUneFormation = new JButton("Créer une formation");
-	    btnCreerUneFormation.setBounds(390, 54, 177, 25);
+	    btnCreerUneFormation.setBounds(404, 71, 177, 25);
 	    panel.add(btnCreerUneFormation);
 	    
 	    JScrollPane scrollPane_1 = new JScrollPane();
@@ -68,28 +76,54 @@ public class Fenetre extends JFrame {
 	    panel.add(scrollPane_1);
 	    
 	    table_1 = new JTable();
-	    scrollPane_1.setViewportView(table_1);
-	    FormationTableModel ftm = new FormationTableModel(FormationDAO.findAllFormation());
+	    scrollPane_1.setColumnHeaderView(table_1);
+	    ftm = new FormationTableModel(FormationDAO.findAllFormation());
 	    table_1.setModel(ftm);
 	    
+//	    saisieNomFormation = new JTextField();
+//	    saisieNomFormation.setBounds(394, 28, 200, 31);
+//	    saisieNomFormation.setText("Nom de la formation");
+//	    saisieNomFormation.addFocusListener(new FocusListener(){
+//	    	@Override
+//            public void focusGained(FocusEvent e){
+//                saisieNomFormation.setText("");
+//            }
+//	    	@Override
+//	    	public void focusLost(FocusEvent e){
+//	    		if(saisieNomFormation.getText().equals("Nom de la formation")){
+//	    			
+//	    			saisieNomFormation.setText("Nom de la formation");
+//	    			
+//	    		}
+//	    	}
+//	    });
+	    panel.add(saisieNomFormation);
+	    saisieNomFormation.setColumns(10);
 	    
 	    
 	    
 	    
-	    btnCreerUneFormation.addActionListener(new ActionListener() {
-	    	public void actionPerformed(ActionEvent arg0) {
-	    		JOptionPane jop = new JOptionPane();
-	    		String nomFormation = JOptionPane.showInputDialog(null, "Veuillez saisir le nom de la nouvelle formation", "Création de formation", JOptionPane.QUESTION_MESSAGE);
-	    		
-	    		try {
-	    			FormationDAO.saveFormation(new Formation(0,nomFormation));
-	    		} catch (Exception e) {
-	    			// TODO Auto-generated catch block
-	    			e.printStackTrace();
-	    		}
-	    	}
-	    	
-	    });
+	    
+	    
+	    
+//	    btnCreerUneFormation.addActionListener(new ActionListener() {
+//	    	public void actionPerformed(ActionEvent arg0) {
+//	    		//JOptionPane jop = new JOptionPane();
+//	    		//String nomFormation = JOptionPane.showInputDialog(null, "Veuillez saisir le nom de la nouvelle formation", "Création de formation", JOptionPane.QUESTION_MESSAGE);
+//	    		
+//	    		String nomFormation = saisieNomFormation.getText();
+//	    		try {
+//	    			Formation newForm = new Formation(0,nomFormation);
+//	    			FormationDAO.saveFormation(newForm);
+//	    			ftm.addFormation(newForm);
+//	    			ftm.fireTableDataChanged();
+//	    		} catch (Exception e) {
+//	    			// TODO Auto-generated catch block
+//	    			e.printStackTrace();
+//	    		}
+//	    	}
+//	    	
+//	    });
 	   
 	    
 	    JPanel panel_1 = new JPanel();
@@ -109,16 +143,17 @@ public class Fenetre extends JFrame {
 	    scrollPane_2.setBounds(7, 12, 384, 432);
 	    panel_1.add(scrollPane_2);
 	    
-	    table_2 = new JTable();
-	    scrollPane_2.setColumnHeaderView(table_2);
-	    StagiaireTableModel stm = new StagiaireTableModel(StagiaireDAO.findAllStagiaire());
-	    table_2.setModel(stm);
+//	    table_2 = new JTable();
+//	    scrollPane_2.setColumnHeaderView(table_2);
+//	    StagiaireTableModel stm = new StagiaireTableModel(StagiaireDAO.findAllStagiaire());
+//	    table_2.setModel(stm);
 	    
 	    
 	    
 	    tableStagiaire = new JTable();
 	    btnAjouterUnStagiaire.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent arg0) {
+	    		
 	    		 JOptionPane jop = new JOptionPane();
 	    		 String nomStagiaire = JOptionPane.showInputDialog(null, "Veuillez saisir votre nom !", "Ajouter un stagiaire", JOptionPane.QUESTION_MESSAGE);
 	    		 String prenomStagiaire = JOptionPane.showInputDialog(null, "Veuillez saisir votre prénom !", "Ajouter un stagiaire", JOptionPane.QUESTION_MESSAGE);

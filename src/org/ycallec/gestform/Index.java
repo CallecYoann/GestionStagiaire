@@ -7,6 +7,7 @@ import java.util.Scanner;
 
 import org.ycallec.gestform.dao.FormationDAO;
 import org.ycallec.gestform.dao.StagiaireDAO;
+import org.ycallec.gestform.model.Fen;
 import org.ycallec.gestform.model.Fenetre;
 import org.ycallec.gestform.model.Formation;
 import org.ycallec.gestform.model.FormationTableModel;
@@ -28,8 +29,8 @@ public class Index {
 		List<Stagiaire> al = new ArrayList<>();
 		Stagiaire s = null;
 		
-		Fenetre fen = new Fenetre();
-		
+		Fen fen = new Fen();
+		fen.setVisible(true);
 		
 		
 

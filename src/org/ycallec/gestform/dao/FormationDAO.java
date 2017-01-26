@@ -11,39 +11,36 @@ import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class FormationDAO {
 
-	public static void saveFormation(Formation f) throws Exception {
-		Connection connection = ConnectDB.getConnection();
-		
-		PreparedStatement stmCreateFormation;
-		try {
-				stmCreateFormation = connection.prepareStatement("INSERT INTO Formation (nom) VALUES (?);", Statement.RETURN_GENERATED_KEYS);
-				stmCreateFormation.setString(1, f.getNom());
-				
-				stmCreateFormation.execute();
-				
-				ResultSet rs = stmCreateFormation.getGeneratedKeys();
-				if (!rs.next()) {
-					System.out.println("Au revoir...");
-	                return;
-	            }
-				f.setId(rs.getInt(1));
-				
-				stmCreateFormation.close();
-			}
-		
-		catch (SQLException e) {
-        
-		throw new Exception("error while creating personne " + e.getMessage());
-		}
-	}
-	
-	public static List<Formation> findAllFormation() {
-		
-		Connection connection = ConnectDB.getConnection();
-        
+    public static void saveFormation(Formation f) throws Exception {
+        Connection connection = ConnectDB.getConnection();
+
+        PreparedStatement stmCreateFormation;
+        try {
+            stmCreateFormation = connection.prepareStatement("INSERT INTO Formation (nom) VALUES (?);", Statement.RETURN_GENERATED_KEYS);
+            stmCreateFormation.setString(1, f.getNom());
+
+            stmCreateFormation.execute();
+
+            ResultSet rs = stmCreateFormation.getGeneratedKeys();
+            if (!rs.next()) {
+                System.out.println("Au revoir...");
+                return;
+            }
+            f.setId(rs.getInt(1));
+
+            stmCreateFormation.close();
+        } catch (SQLException e) {
+
+            throw new Exception("error while creating personne " + e.getMessage());
+        }
+    }
+
+    public static List<Formation> findAllFormation() {
+
+        Connection connection = ConnectDB.getConnection();
+
         List<Formation> formations = new ArrayList<>();
         Statement stm;
         try {
@@ -55,9 +52,9 @@ public class FormationDAO {
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String nom = rs.getString("nom");
-                
+
                 Formation f = new Formation(id, nom);
-                
+
                 formations.add(f);
             }
             rs.close();
@@ -67,8 +64,27 @@ public class FormationDAO {
         }
 
         return formations;
-        
-}
-	
-	
+
+    }
+
+   public static Formation findBy(int id) {
+    Formation p = null;
+    Connection connection = ConnectDB.getConnection();
+    PreparedStatement stm;
+    try {
+        stm = connection.prepareStatement("select * from Formation WHERE id= ?");
+        stm.setInt(1, id);
+        ResultSet rs = stm.executeQuery();
+        if (rs.next()) {
+            p = new Formation(rs.getInt("id"), rs.getString("nom"));
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+        throw new RuntimeException();
+    }
+
+    return p;
+   }
+    
 }

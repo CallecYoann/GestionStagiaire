@@ -13,7 +13,7 @@ import org.ycallec.gestform.model.Stagiaire;
 
 public class StagiaireDAO {
 
-	public static void saveStagiaire(Stagiaire s) throws Exception {
+    public static void saveStagiaire(Stagiaire s) throws Exception {
         Connection connection = ConnectDB.getConnection();
 
         PreparedStatement stmCreatePersonne;
@@ -35,7 +35,7 @@ public class StagiaireDAO {
 
             stmCreateStagiaire = connection.prepareStatement("INSERT INTO Stagiaire (matricule, id_personne, id_formation) VALUES(?, ?, ?);");
             stmCreateStagiaire.setInt(2, s.getId());
-            stmCreateStagiaire.setInt(1, s.getMatricule());           
+            stmCreateStagiaire.setInt(1, s.getMatricule());
             stmCreateStagiaire.setInt(3, s.getFormation().getId());
             stmCreateStagiaire.execute();
 
@@ -49,39 +49,67 @@ public class StagiaireDAO {
         }
     }
 
-	
-	public static List<Stagiaire> findAllStagiaire() {
-			
-			Connection connection = ConnectDB.getConnection();
-	        
-	        List<Stagiaire> stagiaires = new ArrayList<>();
-	        Statement stm;
-	        try {
-	            stm = connection.createStatement();
-	
-	            String sql = "select * from Stagiaire s INNER JOIN Personne p on s.id_personne=p.id INNER JOIN Formation f on s.id_formation=f.id" ;
-	            ResultSet rs = stm.executeQuery(sql);
-	
-	            while (rs.next()) {
-	            	String nom = rs.getString("p.nom");
-	            	String prenom = rs.getString("p.prenom");
-	            	int id = rs.getInt("id");
-	                int matricule = rs.getInt("matricule");
-	                
-	                
-	                
-	                Stagiaire s = new Stagiaire(nom, prenom,id ,matricule);
-	                
-	                stagiaires.add(s);
-	            }
-	            rs.close();
-	
-	        } catch (SQLException e) {
-	            throw new RuntimeException();
-	        }
-	
-	        return stagiaires;
+    public static List<Stagiaire> findBy(Formation f) {
         
-}
-	
+        Connection connection = ConnectDB.getConnection();
+
+        List<Stagiaire> stagiaireByFormation = new ArrayList <>();
+        PreparedStatement stm;
+        try {
+            stm = connection.prepareStatement(" select * from Stagiaire s INNER JOIN Personne p on s.id_personne=p.id WHERE id_formation= ?");
+            stm.setInt(1, f.getId());
+            
+            ResultSet rs = stm.executeQuery();
+            
+            while (rs.next()) {
+                String nom = rs.getString("p.nom");
+                String prenom = rs.getString("p.prenom");
+                int id = rs.getInt("id");
+                int matricule = rs.getInt("matricule");
+                
+                Stagiaire s = new Stagiaire(nom, prenom, id, matricule, f);
+                
+                stagiaireByFormation.add(s);
+            }
+             rs.close();
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+        
+        return stagiaireByFormation;
+    }
+    
+    public static List<Stagiaire> findAllStagiaire() {
+
+        Connection connection = ConnectDB.getConnection();
+
+        List<Stagiaire> stagiaires = new ArrayList<>();
+        Statement stm;
+        try {
+            stm = connection.createStatement();
+
+            String sql = "select * from Stagiaire s INNER JOIN Personne p on s.id_personne=p.id INNER JOIN Formation f on s.id_formation=f.id";
+            ResultSet rs = stm.executeQuery(sql);
+
+            while (rs.next()) {
+                String nom = rs.getString("p.nom");
+                String prenom = rs.getString("p.prenom");
+                int id = rs.getInt("id");
+                int matricule = rs.getInt("matricule");
+                Formation formation = FormationDAO.findBy(rs.getInt("f.id"));
+
+                Stagiaire s = new Stagiaire(nom, prenom, id, matricule, formation);
+
+                stagiaires.add(s);
+            }
+            rs.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+
+        return stagiaires;
+
+    }
+
 }

@@ -5,10 +5,10 @@
  */
 package org.ycallec.gestform.model;
 
-import static com.sun.xml.internal.fastinfoset.alphabet.BuiltInRestrictedAlphabets.table;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -42,6 +42,33 @@ public class Fen extends javax.swing.JFrame {
         }
 
         panelFormDetails.setVisible(false);
+        panelSuppForm.setVisible(false);
+        
+        formationTable.setSelectionModel(new DefaultListSelectionModel() {
+    private static final long serialVersionUID = 1L;
+
+    boolean gestureStarted = false;
+
+    @Override
+    public void setSelectionInterval(int index0, int index1) {
+        if(!gestureStarted){
+            if (isSelectedIndex(index0)) {
+                super.removeSelectionInterval(index0, index1);
+            } else {
+                super.addSelectionInterval(index0, index1);
+            }
+        }
+        gestureStarted = true;
+    }
+
+    @Override
+    public void setValueIsAdjusting(boolean isAdjusting) {
+        if (isAdjusting == false) {
+            gestureStarted = false;
+        }
+    }
+
+});
         
         formationTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
@@ -52,11 +79,14 @@ public class Fen extends javax.swing.JFrame {
                     panelFormDetails.setVisible(true);
                     List<Stagiaire> listeStagiaire = StagiaireDAO.findBy(form);
                     stmf.setStagiaires(listeStagiaire);
-                
-                  stmf.fireTableDataChanged();
-                    System.out.println(stmf.getRowCount());
-                }
+                    stmf.fireTableDataChanged();
+                    panelSuppForm.setVisible(true);
 
+                } else {
+                    stmf.clearStagiaire();
+                    panelFormDetails.setVisible(false);
+                    panelSuppForm.setVisible(false);
+                }
             }
 
         });
@@ -85,6 +115,10 @@ public class Fen extends javax.swing.JFrame {
         panelFormDetails = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jLabel2 = new javax.swing.JLabel();
+        panelSuppForm = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        FormationSuppButton = new javax.swing.JButton();
         StagiairePanel = new javax.swing.JPanel();
         StagiaireListPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -161,9 +195,10 @@ public class Fen extends javax.swing.JFrame {
             }
         });
 
-        FormationListPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        FormationListPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder(java.awt.Color.red, null));
 
         formationTable.setFont(new java.awt.Font("DejaVu Serif", 1, 12)); // NOI18N
+        formationTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jScrollPane2.setViewportView(formationTable);
         ftm = new FormationTableModel(FormationDAO.findAllFormation());
         formationTable.setModel(ftm);
@@ -196,25 +231,60 @@ public class Fen extends javax.swing.JFrame {
 
         stmf = new StagiaireTableModel();
         jTable1.setModel(stmf);
-        jTable1.setEnabled(false);
         jTable1.setRequestFocusEnabled(false);
         jScrollPane3.setViewportView(jTable1);
+
+        jLabel2.setText("Stagiaires de la formation");
 
         javax.swing.GroupLayout panelFormDetailsLayout = new javax.swing.GroupLayout(panelFormDetails);
         panelFormDetails.setLayout(panelFormDetailsLayout);
         panelFormDetailsLayout.setHorizontalGroup(
             panelFormDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelFormDetailsLayout.createSequentialGroup()
-                .addGap(51, 51, 51)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(63, Short.MAX_VALUE))
+                .addGroup(panelFormDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelFormDetailsLayout.createSequentialGroup()
+                        .addGap(41, 41, 41)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 369, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelFormDetailsLayout.createSequentialGroup()
+                        .addGap(130, 130, 130)
+                        .addComponent(jLabel2)))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
         panelFormDetailsLayout.setVerticalGroup(
             panelFormDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelFormDetailsLayout.createSequentialGroup()
-                .addGap(38, 38, 38)
+                .addGap(16, 16, 16)
+                .addComponent(jLabel2)
+                .addGap(18, 18, 18)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(278, Short.MAX_VALUE))
+                .addContainerGap(267, Short.MAX_VALUE))
+        );
+
+        panelSuppForm.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel3.setText("Supprimer la formation");
+
+        FormationSuppButton.setText("OK");
+
+        javax.swing.GroupLayout panelSuppFormLayout = new javax.swing.GroupLayout(panelSuppForm);
+        panelSuppForm.setLayout(panelSuppFormLayout);
+        panelSuppFormLayout.setHorizontalGroup(
+            panelSuppFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelSuppFormLayout.createSequentialGroup()
+                .addGap(57, 57, 57)
+                .addComponent(jLabel3)
+                .addGap(29, 29, 29)
+                .addComponent(FormationSuppButton)
+                .addContainerGap(125, Short.MAX_VALUE))
+        );
+        panelSuppFormLayout.setVerticalGroup(
+            panelSuppFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelSuppFormLayout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addGroup(panelSuppFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(FormationSuppButton))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout FormationPanelLayout = new javax.swing.GroupLayout(FormationPanel);
@@ -224,24 +294,27 @@ public class Fen extends javax.swing.JFrame {
             .addGroup(FormationPanelLayout.createSequentialGroup()
                 .addGap(35, 35, 35)
                 .addGroup(FormationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(FormationAddPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(FormationListPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
-                .addComponent(panelFormDetails, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(panelSuppForm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(FormationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(FormationAddPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(FormationListPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 112, Short.MAX_VALUE)
+                .addComponent(panelFormDetails, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(37, 37, 37))
         );
         FormationPanelLayout.setVerticalGroup(
             FormationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(FormationPanelLayout.createSequentialGroup()
+                .addGap(17, 17, 17)
                 .addGroup(FormationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panelFormDetails, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(FormationPanelLayout.createSequentialGroup()
-                        .addGap(17, 17, 17)
-                        .addComponent(FormationListPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(FormationPanelLayout.createSequentialGroup()
-                        .addGap(29, 29, 29)
-                        .addComponent(panelFormDetails, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(32, 32, 32)
-                .addComponent(FormationAddPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(14, Short.MAX_VALUE))
+                        .addComponent(FormationListPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(FormationAddPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(30, 30, 30)
+                .addComponent(panelSuppForm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Formation", FormationPanel);
@@ -369,7 +442,7 @@ public class Fen extends javax.swing.JFrame {
                 .addComponent(StagiaireListPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(79, 79, 79)
                 .addComponent(StagiaireAddPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(164, Short.MAX_VALUE))
+                .addContainerGap(316, Short.MAX_VALUE))
         );
         StagiairePanelLayout.setVerticalGroup(
             StagiairePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -378,7 +451,7 @@ public class Fen extends javax.swing.JFrame {
                 .addGroup(StagiairePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(StagiaireListPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(StagiaireAddPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(254, Short.MAX_VALUE))
+                .addContainerGap(324, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Stagiaire", StagiairePanel);
@@ -514,6 +587,7 @@ public class Fen extends javax.swing.JFrame {
     private javax.swing.JPanel FormationAddPanel;
     private javax.swing.JPanel FormationListPanel;
     private javax.swing.JPanel FormationPanel;
+    private javax.swing.JButton FormationSuppButton;
     private javax.swing.JLabel FormationTableLabel;
     private javax.swing.JTextField FormationTextField;
     private javax.swing.JTextField MatriculeStagiaireTextField;
@@ -529,6 +603,8 @@ public class Fen extends javax.swing.JFrame {
     private javax.swing.JTable StagiaireTableList;
     private javax.swing.JTable formationTable;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -543,6 +619,7 @@ public class Fen extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane;
     private javax.swing.JTable jTable1;
     private javax.swing.JPanel panelFormDetails;
+    private javax.swing.JPanel panelSuppForm;
     // End of variables declaration//GEN-END:variables
 
 }

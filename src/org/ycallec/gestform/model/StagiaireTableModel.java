@@ -37,6 +37,11 @@ public class StagiaireTableModel extends AbstractTableModel {
         this.stagiaires.add(s);
     }
     
+    public void clearStagiaire() {
+        this.stagiaires = new ArrayList<>();
+        this.fireTableDataChanged();
+    }
+    
     public void setStagiaires(List<Stagiaire> stagiaires) {
         this.stagiaires = stagiaires;
     }
